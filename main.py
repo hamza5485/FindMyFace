@@ -7,15 +7,15 @@ import cv2
 import time
 
 """INIT"""
-SOURCE_DATA = "source_dataset/"
-IMAGE_SET = "images/"
+SOURCE_DATA_DIR = "source_dataset/"
+IMAGE_SET_DIR = "images/"
 FACE_FOUND_DIR = "face_found/"
 TOLERANCE = 0.5
 FRAME_THICKNESS = 4
 COLOR = [0, 0, 255]
 DETECTION_MODEL = "hog"
 
-log = Logger()
+log = Logger(os.path.basename(__file__))
 
 source_faces = []
 
@@ -23,10 +23,10 @@ start = time.perf_counter()
 
 """LOADING SOURCE IMAGES"""
 log.info(f"loading source images")
-for index, filename in enumerate(os.listdir(SOURCE_DATA)):
+for index, filename in enumerate(os.listdir(SOURCE_DATA_DIR)):
     if filename.endswith("JPG"):
         log.info(f"processing source image {filename}")
-        img_path = SOURCE_DATA + filename
+        img_path = SOURCE_DATA_DIR + filename
         # using image_to_numpy to load img file -> fixes image orientation -> face encoding is found
         img = image_to_numpy.load_image_file(img_path)
         try:
@@ -35,16 +35,17 @@ for index, filename in enumerate(os.listdir(SOURCE_DATA)):
             source_faces.append(source_img_encoding)
         except IndexError:
             log.error("no face detected")
+    break
 
-if len(os.listdir(SOURCE_DATA)) - len(source_faces) != 0:
-    log.warn(f"{str(len(source_faces))} faces found in {str(len(os.listdir(SOURCE_DATA)))} images")
+if len(os.listdir(SOURCE_DATA_DIR)) - len(source_faces) != 0:
+    log.warn(f"{str(len(source_faces))} faces found in {str(len(os.listdir(SOURCE_DATA_DIR)))} images")
 
 """MAIN PROCESS"""
 log.info(f"Processing dataset")
-for index, filename in enumerate(os.listdir(IMAGE_SET)):
+for index, filename in enumerate(os.listdir(IMAGE_SET_DIR)):
     if filename.endswith("JPG"):
-        log.info(f"processing dataset image {filename} ({index + 1}/{len(os.listdir(IMAGE_SET))})")
-        img_path = IMAGE_SET + filename
+        log.info(f"processing dataset image {filename} ({index + 1}/{len(os.listdir(IMAGE_SET_DIR))})")
+        img_path = IMAGE_SET_DIR + filename
         img = image_to_numpy.load_image_file(img_path)
         try:
             locations = face_recognition.face_locations(img, model=DETECTION_MODEL)
@@ -66,7 +67,8 @@ for index, filename in enumerate(os.listdir(IMAGE_SET)):
             log.error("no face detected")
         except Exception as err:
             log.error(f"error encountered: {err}")
+    break
 
 stop = time.perf_counter()
 
-print(f"Total time taken was {stop - start:0.4f} seconds")
+log.info(f"Total time elapsed {stop - start:0.4f} seconds")
