@@ -35,9 +35,8 @@ for index, filename in enumerate(os.listdir(SOURCE_DATA_DIR)):
             source_faces.append(source_img_encoding)
         except IndexError:
             log.error("no face detected")
-    break
 
-if len(os.listdir(SOURCE_DATA_DIR)) - len(source_faces) != 0:
+if (len(os.listdir(SOURCE_DATA_DIR)) - 1) - len(source_faces) != 0:  # -1 for .gitignore
     log.warn(f"{str(len(source_faces))} faces found in {str(len(os.listdir(SOURCE_DATA_DIR)))} images")
 
 """MAIN PROCESS"""
@@ -51,7 +50,6 @@ for index, filename in enumerate(os.listdir(IMAGE_SET_DIR)):
             locations = face_recognition.face_locations(img, model=DETECTION_MODEL)
             encodings = face_recognition.face_encodings(img, locations)
             for face_encoding, face_location in zip(encodings, locations):
-                # for encoding in face_encodings:
                 results = face_recognition.compare_faces(source_faces, face_encoding, TOLERANCE)
                 if True in results:
                     log.success("match found!")
@@ -67,7 +65,6 @@ for index, filename in enumerate(os.listdir(IMAGE_SET_DIR)):
             log.error("no face detected")
         except Exception as err:
             log.error(f"error encountered: {err}")
-    break
 
 stop = time.perf_counter()
 
