@@ -1,4 +1,4 @@
-#FindMyFace
+# FindMyFace
 Face recognition experiment using `face_recognition`, `image_to_numpy` and `OpenCV2`. 
 For a better understanding of why this project was created and how it works, please read the following article: [A Story of Face Recognition using Python](https://dev.to/hamza5485/a-story-of-face-recognition-using-python-3b1a).
 
